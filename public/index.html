@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Metivier Method</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;
+  --gold-light:#E8D5A3;
+  --black:#0A0A0A;
+  --surface:#111111;
+  --surface2:#1A1A1A;
+  --border:#2A2A2A;
+  --text:#F5F0E8;
+  --muted:#888880;
+  --font-serif:'Cormorant Garamond',serif;
+  --font-sans:'Montserrat',sans-serif;
+}
+html,body{height:100%;background:var(--black);color:var(--text);font-family:var(--font-sans)}
+
+/* GATE */
+#gate{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem;text-align:center}
+.gate-monogram{font-family:var(--font-serif);font-size:72px;font-weight:300;color:var(--gold);letter-spacing:8px;line-height:1;margin-bottom:8px}
+.gate-title{font-family:var(--font-serif);font-size:28px;font-weight:300;letter-spacing:6px;text-transform:uppercase;color:var(--text);margin-bottom:4px}
+.gate-sub{font-size:10px;font-weight:300;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:48px}
+.gate-divider{width:1px;height:40px;background:var(--gold);margin:0 auto 48px;opacity:0.4}
+.gate-label{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.gate-input{background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--font-sans);font-size:13px;font-weight:300;letter-spacing:3px;text-align:center;padding:12px 0;width:260px;outline:none;transition:border-color 0.3s}
+.gate-input:focus{border-color:var(--gold)}
+.gate-input::placeholder{color:var(--border);letter-spacing:3px}
+.gate-btn{margin-top:32px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:var(--font-sans);font-size:9px;font-weight:500;letter-spacing:5px;text-transform:uppercase;padding:14px 40px;cursor:pointer;transition:all 0.3s;display:block;width:260px}
+.gate-btn:hover{background:var(--gold);color:var(--black)}
+.gate-error{font-size:10px;letter-spacing:2px;color:#c0392b;margin-top:16px;min-height:16px;transition:opacity 0.3s;opacity:0}
+.gate-error.show{opacity:1}
+.gate-footer{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--border)}
+
+/* APP */
+#app{display:none;flex-direction:column;height:100vh;max-width:720px;margin:0 auto;width:100%}
+.app-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.header-brand{display:flex;align-items:baseline;gap:10px}
+.header-m{font-family:var(--font-serif);font-size:24px;font-weight:300;color:var(--gold);letter-spacing:2px}
+.header-title{font-size:9px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:var(--muted)}
+.header-status{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:#2ecc71;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+.messages{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.messages::-webkit-scrollbar{width:3px}
+.messages::-webkit-scrollbar-thumb{background:var(--border)}
+
+.msg{display:flex;flex-direction:column;gap:6px;animation:fadeUp 0.3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{align-items:flex-end}
+.msg.assistant{align-items:flex-start}
+.msg-label{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);padding:0 4px}
+.bubble{padding:14px 18px;line-height:1.8;font-size:13px;font-weight:300;max-width:85%;white-space:pre-wrap}
+.msg.user .bubble{background:var(--surface2);border:1px solid var(--border);border-radius:2px 12px 12px 12px}
+.msg.assistant .bubble{background:transparent;border:1px solid #2A2416;border-radius:12px 2px 12px 12px;border-left:2px solid var(--gold)}
+.typing{display:flex;gap:4px;padding:14px 18px;border:1px solid #2A2416;border-left:2px solid var(--gold);border-radius:12px 2px 12px 12px;width:fit-content}
+.typing span{width:4px;height:4px;border-radius:50%;background:var(--gold);animation:bounce 1.2s infinite}
+.typing span:nth-child(2){animation-delay:0.2s}
+.typing span:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+.welcome{text-align:center;padding:40px 20px 28px;border-bottom:1px solid var(--border);margin-bottom:8px}
+.welcome-m{font-family:var(--font-serif);font-size:48px;font-weight:300;color:var(--gold);letter-spacing:4px;margin-bottom:4px}
+.welcome-text{font-family:var(--font-serif);font-size:16px;font-style:italic;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.prompts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.prompt-chip{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font-sans);font-size:10px;font-weight:300;letter-spacing:1px;padding:8px 14px;cursor:pointer;transition:all 0.2s;border-radius:2px}
+.prompt-chip:hover{border-color:var(--gold);color:var(--gold)}
+
+.input-area{padding:16px 24px 24px;border-top:1px solid var(--border);display:flex;gap:12px;align-items:flex-end;flex-shrink:0}
+.input-wrap{flex:1}
+.chat-input{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--font-sans);font-size:13px;font-weight:300;padding:12px 16px;resize:none;outline:none;line-height:1.6;max-height:120px;border-radius:2px;transition:border-color 0.2s}
+.chat-input:focus{border-color:var(--gold)}
+.chat-input::placeholder{color:var(--border)}
+.send-btn{background:var(--gold);border:none;color:var(--black);width:40px;height:40px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity 0.2s;border-radius:2px}
+.send-btn:hover{opacity:0.85}
+.send-btn:disabled{opacity:0.3;cursor:not-allowed}
+.send-btn svg{width:16px;height:16px}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-monogram">M</div>
+  <div class="gate-title">The Metivier Method</div>
+  <div class="gate-sub">Private Access</div>
+  <div class="gate-divider"></div>
+  <div class="gate-label">Enter your access code</div>
+  <input class="gate-input" id="accessInput" type="password" placeholder="· · · · · · · ·" autocomplete="off">
+  <button class="gate-btn" onclick="checkAccess()">Enter</button>
+  <div class="gate-error" id="gateError">Invalid access code</div>
+  <div class="gate-footer">metivier productions</div>
+</div>
+
+<div id="app">
+  <div class="app-header">
+    <div class="header-brand">
+      <span class="header-m">M</span>
+      <span class="header-title">The Metivier Method</span>
+    </div>
+    <div class="header-status">
+      <div class="status-dot"></div>
+      <span>Live</span>
+    </div>
+  </div>
+  <div class="messages" id="messages">
+    <div class="welcome">
+      <div class="welcome-m">Welcome.</div>
+      <div class="welcome-text">Your private advisor for navigating the entertainment industry<br>as a multi-hyphenate creative.</div>
+      <div class="prompts">
+        <button class="prompt-chip" onclick="sendPromptText('How do I get theatrical agent representation?')">Getting theatrical representation</button>
+        <button class="prompt-chip" onclick="sendPromptText('How do I convert audition callbacks into bookings?')">Converting callbacks to bookings</button>
+        <button class="prompt-chip" onclick="sendPromptText('How do I build my brand as a multi-hyphenate?')">Multi-hyphenate brand strategy</button>
+        <button class="prompt-chip" onclick="sendPromptText('How do I pitch my film to festivals?')">Festival strategy</button>
+        <button class="prompt-chip" onclick="sendPromptText('How do I land brand partnership deals?')">Brand partnership deals</button>
+      </div>
+    </div>
+  </div>
+  <div class="input-area">
+    <div class="input-wrap">
+      <textarea class="chat-input" id="chatInput" placeholder="Ask anything about your career..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    </div>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  // ⬇️ CHANGE THIS to your desired access code
+  const ACCESS_CODE = "METIVIER";
+
+  let history = [];
+  let isLoading = false;
+
+  function checkAccess() {
+    const val = document.getElementById('accessInput').value.trim().toUpperCase();
+    const err = document.getElementById('gateError');
+    if (val === ACCESS_CODE) {
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+    } else {
+      err.classList.add('show');
+      document.getElementById('accessInput').value = '';
+      setTimeout(() => err.classList.remove('show'), 3000);
+    }
+  }
+
+  document.getElementById('accessInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkAccess();
+  });
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  }
+
+  function sendPromptText(text) {
+    document.getElementById('chatInput').value = text;
+    sendMessage();
+  }
+
+  function addMessage(role, content) {
+    const msgs = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = 'msg ' + role;
+    const label = document.createElement('div');
+    label.className = 'msg-label';
+    label.textContent = role === 'user' ? 'You' : 'The Method';
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = content;
+    div.appendChild(label);
+    div.appendChild(bubble);
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function showTyping() {
+    const msgs = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.id = 'typing';
+    div.className = 'msg assistant';
+    const label = document.createElement('div');
+    label.className = 'msg-label';
+    label.textContent = 'The Method';
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    div.appendChild(label);
+    div.appendChild(typing);
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function removeTyping() {
+    const t = document.getElementById('typing');
+    if (t) t.remove();
+  }
+
+  async function sendMessage() {
+    if (isLoading) return;
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    input.value = '';
+    input.style.height = 'auto';
+    isLoading = true;
+    document.getElementById('sendBtn').disabled = true;
+
+    addMessage('user', text);
+    history.push({ role: 'user', content: text });
+    showTyping();
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history })
+      });
+      const data = await res.json();
+      const reply = data.content && data.content[0] ? data.content[0].text : 'Something went wrong. Please try again.';
+      removeTyping();
+      addMessage('assistant', reply);
+      history.push({ role: 'assistant', content: reply });
+    } catch (e) {
+      removeTyping();
+      addMessage('assistant', 'Connection issue. Please try again.');
+    }
+
+    isLoading = false;
+    document.getElementById('sendBtn').disabled = false;
+    input.focus();
+  }
+</script>
+</body>
+</html>
