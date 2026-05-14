@@ -1,9 +1,0 @@
-{
-  "name": "metivier-method",
-  "version": "1.0.0",
-  "description": "The Metivier Method - Private AI Advisor",
-  "private": true,
-  "engines": {
-    "node": ">=18"
-  }
-}
