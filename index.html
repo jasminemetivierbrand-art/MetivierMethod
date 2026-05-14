@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Métivier Method</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;--black:#08080A;--surface:#111113;--surface2:#18181C;
+  --border:rgba(201,168,76,0.12);--border2:rgba(201,168,76,0.22);
+  --text:#F2EDE6;--muted:rgba(242,237,230,0.45);--muted2:rgba(242,237,230,0.2);
+  --career:#C9A84C;--standard:#C4847A;--ascension:#9B7DC8;--glow:#D4955A;
+  --serif:'Cormorant Garamond',serif;--sans:'Montserrat',sans-serif;
+}
+html,body{min-height:100%;background:var(--black);color:var(--text);font-family:var(--sans)}
+
+/* ── GATE ── */
+#gate{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem;text-align:center}
+.g-m{font-family:var(--serif);font-size:80px;font-weight:200;color:var(--gold);letter-spacing:6px;line-height:1}
+.g-title{font-family:var(--serif);font-size:20px;font-weight:300;letter-spacing:8px;text-transform:uppercase;margin:4px 0}
+.g-sub{font-size:8px;letter-spacing:5px;text-transform:uppercase;color:var(--muted);margin-bottom:36px}
+.g-free{display:inline-block;font-size:8px;letter-spacing:3px;text-transform:uppercase;padding:6px 16px;border:1px solid rgba(201,168,76,0.3);color:var(--gold);margin-bottom:32px;cursor:pointer;transition:all 0.2s}
+.g-free:hover{background:rgba(201,168,76,0.1)}
+.g-div{width:1px;height:28px;background:var(--gold);margin:0 auto 32px;opacity:0.25}
+.g-label{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.g-input{background:transparent;border:none;border-bottom:1px solid rgba(201,168,76,0.2);color:var(--text);font-family:var(--sans);font-size:13px;font-weight:300;letter-spacing:3px;text-align:center;padding:10px 0;width:240px;outline:none;transition:border-color 0.3s}
+.g-input:focus{border-color:var(--gold)}
+.g-input::placeholder{color:rgba(201,168,76,0.2)}
+.g-btn{margin-top:24px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:var(--sans);font-size:8px;font-weight:500;letter-spacing:6px;text-transform:uppercase;padding:13px 40px;cursor:pointer;transition:all 0.3s;display:block;width:240px}
+.g-btn:hover{background:var(--gold);color:var(--black)}
+.g-err{font-size:9px;letter-spacing:2px;color:#c0392b;margin-top:12px;opacity:0;transition:opacity 0.3s;min-height:14px}
+.g-err.show{opacity:1}
+.g-foot{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);font-size:8px;letter-spacing:4px;text-transform:uppercase;color:var(--muted2)}
+
+/* ── APP ── */
+#app{display:none;flex-direction:column;min-height:100vh}
+
+/* HEADER */
+.hdr{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--black);z-index:10}
+.hdr-left{display:flex;align-items:baseline;gap:8px}
+.hdr-m{font-family:var(--serif);font-size:22px;font-weight:300;color:var(--gold);letter-spacing:2px}
+.hdr-name{font-size:8px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:var(--muted)}
+.hdr-right{display:flex;align-items:center;gap:12px}
+.hdr-free{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+.hdr-upgrade{background:var(--gold);color:var(--black);font-family:var(--sans);font-size:8px;font-weight:500;letter-spacing:4px;text-transform:uppercase;padding:8px 16px;border:none;cursor:pointer;transition:opacity 0.2s}
+.hdr-upgrade:hover{opacity:0.85}
+
+/* HERO */
+.hero{padding:48px 24px 36px;text-align:center;border-bottom:1px solid var(--border)}
+.hero-eye{font-size:8px;letter-spacing:6px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.hero-title{font-family:var(--serif);font-size:clamp(30px,5vw,52px);font-weight:200;letter-spacing:2px;line-height:1.15;margin-bottom:10px}
+.hero-title em{font-style:italic;color:var(--gold)}
+.hero-sub{font-family:var(--serif);font-size:15px;font-style:italic;color:var(--muted);max-width:440px;margin:0 auto 16px}
+.hero-count{font-size:8px;letter-spacing:4px;text-transform:uppercase;color:var(--muted2)}
+
+/* TABS */
+.tabs{padding:20px 24px 0;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:800px;margin:0 auto;width:100%}
+.tab{background:transparent;border:1px solid var(--border2);color:var(--muted);font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:4px;text-transform:uppercase;padding:9px 18px;cursor:pointer;transition:all 0.2s;border-radius:2px;display:flex;align-items:center;gap:6px}
+.tab:hover{border-color:var(--gold);color:var(--gold)}
+.tab.active{color:var(--black);border-color:transparent}
+.tab.active.all{background:var(--gold)}
+.tab.active.career{background:var(--career)}
+.tab.active.standard{background:var(--standard)}
+.tab.active.ascension{background:var(--ascension)}
+.tab.active.glow{background:var(--glow)}
+.tab-count{font-size:7px;opacity:0.7;letter-spacing:1px}
+
+/* GRID */
+.grid{padding:20px 24px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;max-width:1000px;margin:0 auto;width:100%}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:22px;cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;position:relative}
+.card:hover{background:var(--surface2)}
+.card.free-card{border-color:rgba(201,168,76,0.25)}
+.free-badge{position:absolute;top:14px;right:14px;font-size:7px;letter-spacing:3px;text-transform:uppercase;padding:3px 8px;background:rgba(201,168,76,0.1);color:var(--gold);border:1px solid rgba(201,168,76,0.25);border-radius:2px}
+.card-cat{font-size:8px;letter-spacing:4px;text-transform:uppercase;margin-bottom:8px}
+.card-name{font-family:var(--serif);font-size:21px;font-weight:400;line-height:1.2;margin-bottom:8px}
+.card-desc{font-size:11px;color:var(--muted);line-height:1.6;flex:1}
+.card-cta{display:flex;align-items:center;gap:6px;margin-top:14px;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);transition:color 0.2s}
+.card:hover .card-cta{color:var(--text)}
+.card-arrow{transition:transform 0.2s}
+.card:hover .card-arrow{transform:translateX(4px)}
+.tc-career .card-cat{color:var(--career)} .tc-career:hover{border-color:rgba(201,168,76,0.25)}
+.tc-standard .card-cat{color:var(--standard)} .tc-standard:hover{border-color:rgba(196,132,122,0.25)}
+.tc-ascension .card-cat{color:var(--ascension)} .tc-ascension:hover{border-color:rgba(155,125,200,0.25)}
+.tc-glow .card-cat{color:var(--glow)} .tc-glow:hover{border-color:rgba(212,149,74,0.25)}
+
+/* UPGRADE BANNER */
+.upgrade-banner{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:20px 24px;text-align:center;display:none}
+.upgrade-banner.show{display:block}
+.ub-title{font-family:var(--serif);font-size:20px;font-weight:300;margin-bottom:4px}
+.ub-sub{font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:12px}
+.ub-btn{display:inline-block;background:var(--gold);color:var(--black);font-family:var(--sans);font-size:9px;font-weight:500;letter-spacing:5px;text-transform:uppercase;padding:12px 32px;border:none;cursor:pointer;transition:opacity 0.2s}
+.ub-btn:hover{opacity:0.85}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+@media(min-width:680px){.modal-bg{align-items:center}}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:8px 8px 0 0;width:100%;max-width:660px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden}
+@media(min-width:680px){.modal{border-radius:8px}}
+.modal-hdr{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
+.modal-cat{font-size:8px;letter-spacing:4px;text-transform:uppercase;margin-bottom:3px}
+.modal-name{font-family:var(--serif);font-size:22px;font-weight:400}
+.modal-x{background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:2px;line-height:1}
+.modal-x:hover{color:var(--text)}
+.modal-body{flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+.modal-prompt{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--muted);line-height:1.6}
+.modal-ta{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:12px;font-weight:300;padding:12px;resize:none;outline:none;line-height:1.7;border-radius:4px;min-height:110px;transition:border-color 0.2s}
+.modal-ta:focus{border-color:var(--gold)}
+.modal-ta::placeholder{color:var(--muted2)}
+.modal-submit{border:none;font-family:var(--sans);font-size:9px;font-weight:500;letter-spacing:5px;text-transform:uppercase;padding:13px 28px;cursor:pointer;transition:opacity 0.2s;border-radius:2px;align-self:flex-start}
+.modal-submit:hover{opacity:0.85}
+.modal-submit:disabled{opacity:0.3;cursor:not-allowed}
+
+/* PLAYBOOK */
+.playbook{display:none;flex-direction:column;gap:12px}
+.playbook.show{display:flex}
+.pb-label{font-size:8px;letter-spacing:4px;text-transform:uppercase;color:var(--muted)}
+.pb-text{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:18px;font-size:12px;line-height:1.85;color:var(--text);white-space:pre-wrap;font-weight:300}
+.pb-actions{display:flex;gap:8px;flex-wrap:wrap}
+.pb-copy{background:transparent;border:1px solid var(--border2);color:var(--muted);font-family:var(--sans);font-size:8px;letter-spacing:3px;text-transform:uppercase;padding:9px 18px;cursor:pointer;border-radius:2px;transition:all 0.2s}
+.pb-copy:hover{border-color:var(--gold);color:var(--gold)}
+
+/* EMAIL CAPTURE */
+.email-cap{background:rgba(201,168,76,0.04);border:1px solid var(--border2);border-radius:4px;padding:16px}
+.ec-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.ec-sub{font-size:11px;color:var(--muted);margin-bottom:10px}
+.ec-row{display:flex;gap:8px}
+.ec-input{flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:12px;font-weight:300;padding:9px 12px;outline:none;border-radius:2px;transition:border-color 0.2s}
+.ec-input:focus{border-color:var(--gold)}
+.ec-input::placeholder{color:var(--muted2)}
+.ec-send{background:var(--gold);border:none;color:var(--black);font-family:var(--sans);font-size:8px;font-weight:500;letter-spacing:3px;text-transform:uppercase;padding:9px 18px;cursor:pointer;border-radius:2px;white-space:nowrap;transition:opacity 0.2s}
+.ec-send:hover{opacity:0.85}
+.ec-thanks{font-size:10px;letter-spacing:2px;color:var(--gold);display:none}
+
+/* FOLLOW-UP */
+.followup{display:none;flex-direction:column;gap:8px}
+.followup.show{display:flex}
+.fu-label{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+.fu-row{display:flex;gap:8px}
+.fu-input{flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--sans);font-size:12px;font-weight:300;padding:9px 12px;outline:none;border-radius:2px;transition:border-color 0.2s}
+.fu-input:focus{border-color:var(--gold)}
+.fu-input::placeholder{color:var(--muted2)}
+.fu-send{border:none;color:var(--black);font-family:var(--sans);font-size:8px;font-weight:500;letter-spacing:3px;text-transform:uppercase;padding:9px 16px;cursor:pointer;border-radius:2px;white-space:nowrap;transition:opacity 0.2s}
+.fu-send:hover{opacity:0.85}
+.fu-send:disabled{opacity:0.3;cursor:not-allowed}
+
+/* TYPING */
+.typing{display:none;gap:4px;padding:8px 0}
+.typing.show{display:flex}
+.typing span{width:4px;height:4px;border-radius:50%;background:var(--gold);animation:tdot 1.2s infinite}
+.typing span:nth-child(2){animation-delay:0.2s}
+.typing span:nth-child(3){animation-delay:0.4s}
+@keyframes tdot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+
+@media(max-width:480px){.grid{grid-template-columns:1fr;padding:16px}.hdr-name{display:none}}
+</style>
+</head>
+<body>
+
+<!-- GATE -->
+<div id="gate">
+  <div class="g-m">M</div>
+  <div class="g-title">The Métivier Method</div>
+  <div class="g-sub">A Practitioner's Toolkit</div>
+  <div class="g-free" onclick="enterFree()">Try 1 free playbook — no code required →</div>
+  <div class="g-div"></div>
+  <div class="g-label">Member access code</div>
+  <input class="g-input" id="gateInput" type="password" placeholder="· · · · · · · ·" autocomplete="off">
+  <button class="g-btn" onclick="checkAccess()">Enter</button>
+  <div class="g-err" id="gateErr">Invalid access code</div>
+  <div class="g-foot">metivier productions</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="hdr">
+    <div class="hdr-left">
+      <span class="hdr-m">M</span>
+      <span class="hdr-name">The Métivier Method</span>
+    </div>
+    <div class="hdr-right">
+      <span class="hdr-free" id="hdrFreeLabel"></span>
+      <button class="hdr-upgrade" id="hdrUpgrade" onclick="showUpgrade()" style="display:none">Upgrade</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-eye">A Practitioner's Toolkit</div>
+    <div class="hero-title">Your <em>personal playbook,</em><br>on demand.</div>
+    <div class="hero-sub">Pick a tool. Describe your situation. Walk out with a plan.</div>
+    <div class="hero-count" id="heroCount"></div>
+  </div>
+
+  <div class="upgrade-banner" id="upgradeBanner">
+    <div class="ub-title">You have used your free playbook.</div>
+    <div class="ub-sub">Unlock all 36 tools — Career · The Standard · The Ascension · The Glow Up</div>
+    <button class="ub-btn" onclick="window.open('https://stan.store/metivierproductions','_blank')">Get Full Access — $47</button>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab all active" onclick="filter('all',this)">All <span class="tab-count">36</span></button>
+    <button class="tab career" onclick="filter('career',this)">Career <span class="tab-count">8</span></button>
+    <button class="tab standard" onclick="filter('standard',this)">The Standard <span class="tab-count">8</span></button>
+    <button class="tab ascension" onclick="filter('ascension',this)">The Ascension <span class="tab-count">9</span></button>
+    <button class="tab glow" onclick="filter('glow',this)">The Glow Up <span class="tab-count">11</span></button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg" onclick="closeBg(event)">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-cat" id="mCat"></div>
+        <div class="modal-name" id="mName"></div>
+      </div>
+      <button class="modal-x" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="mBody">
+      <div class="modal-prompt" id="mPrompt"></div>
+      <textarea class="modal-ta" id="mTa" placeholder="The more specific you are, the more specific your playbook will be..."></textarea>
+      <button class="modal-submit" id="mSubmit" onclick="generate()">Generate My Playbook →</button>
+      <div class="typing" id="typing"><span></span><span></span><span></span></div>
+
+      <div class="playbook" id="playbook">
+        <div class="pb-label">Your Playbook</div>
+        <div class="pb-text" id="pbText"></div>
+        <div class="pb-actions">
+          <button class="pb-copy" onclick="copyPlaybook()">Copy Playbook</button>
+        </div>
+      </div>
+
+      <div class="email-cap" id="emailCap" style="display:none">
+        <div class="ec-label">Send to your inbox</div>
+        <div class="ec-sub">Get this playbook delivered to your email to save it.</div>
+        <div class="ec-row">
+          <input class="ec-input" id="ecInput" type="email" placeholder="your@email.com">
+          <button class="ec-send" onclick="sendEmail()">Send</button>
+        </div>
+        <div class="ec-thanks" id="ecThanks">✓ Sent — check your inbox</div>
+      </div>
+
+      <div class="followup" id="followup">
+        <div class="fu-label">Go deeper</div>
+        <div class="fu-row">
+          <input class="fu-input" id="fuInput" placeholder="Ask a follow-up on any section..." onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendFu()">
+          <button class="fu-send" id="fuSend" onclick="sendFu()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ACCESS = 'METIVIER';
+const FREE_TOOL = 'pattern_diagnosis';
+let isMember = false, freeUsed = false, currentTool = null, history = [], loading = false;
+
+const TOOLS = [
+  // CAREER
+  {id:'agent_strategy',cat:'career',label:'Career',name:'Agent Strategy',desc:'Get the right representation with the right approach and perfect timing.'},
+  {id:'audition_conversion',cat:'career',label:'Career',name:'Audition Conversion',desc:'Turn your next audition or callback into an actual booking.'},
+  {id:'selftape_mastery',cat:'career',label:'Career',name:'Self-Tape Mastery',desc:'Film and submit self-tapes that actually get you in the room.'},
+  {id:'reel_blueprint',cat:'career',label:'Career',name:'Reel Blueprint',desc:'Build a reel that opens doors — even starting from scratch.'},
+  {id:'brand_deal',cat:'career',label:'Career',name:'Brand Deal Playbook',desc:'Land brand partnerships and negotiate rates that reflect your value.'},
+  {id:'festival_strategy',cat:'career',label:'Career',name:'Festival Strategy',desc:'Submit, position, and maximize your film\'s entire festival run.'},
+  {id:'agency_email',cat:'career',label:'Career',name:'Agency Email',desc:'The exact email that gets opened — written for your specific credits.'},
+  {id:'negotiation_script',cat:'career',label:'Career',name:'Negotiation Script',desc:'Salary, brand deal, contract — get what you are actually worth.'},
+  // THE STANDARD
+  {id:'pattern_diagnosis',cat:'standard',label:'The Standard',name:'Pattern Diagnosis',desc:'Name what keeps repeating and understand exactly why.',free:true},
+  {id:'standards_audit',cat:'standard',label:'The Standard',name:'Standards Audit',desc:'Identify what you are accepting versus what you actually deserve.'},
+  {id:'situationship_exit',cat:'standard',label:'The Standard',name:'Situationship Exit',desc:'Leave with your dignity, your words, and your peace intact.'},
+  {id:'vetting_process',cat:'standard',label:'The Standard',name:'The Vetting Process',desc:'Evaluate someone before you invest — with your eyes open.'},
+  {id:'relationship_audit',cat:'standard',label:'The Standard',name:'Relationship Audit',desc:'Honestly assess if what you are in actually meets your needs.'},
+  {id:'closing_message',cat:'standard',label:'The Standard',name:'Closing Message',desc:'End it with clarity, dignity, and the exact right words.'},
+  {id:'receiving_practice',cat:'standard',label:'The Standard',name:'Receiving Practice',desc:'Learn to let in love, help, and care without shrinking.'},
+  {id:'breakup_recovery',cat:'standard',label:'The Standard',name:'Breakup Recovery',desc:'Heal after it ends — the honest timeline and the real protocol.'},
+  {id:'friendship_audit',cat:'standard',label:'The Standard',name:'Friendship Audit',desc:'Assess a friendship honestly and know when it is time to move on.'},
+  // THE ASCENSION
+  {id:'manifestation_blueprint',cat:'ascension',label:'The Ascension',name:'Manifestation Blueprint',desc:'Build a practice around your specific desire, using the right method.'},
+  {id:'morning_ritual',cat:'ascension',label:'The Ascension',name:'Morning Ritual',desc:'Design the ritual that sets the frequency of your entire day.'},
+  {id:'sats_protocol',cat:'ascension',label:'The Ascension',name:'SATS Protocol',desc:'Neville Goddard\'s sleep method — applied to your specific desire.'},
+  {id:'scripting_session',cat:'ascension',label:'The Ascension',name:'Scripting Session',desc:'Write your future into existence with the method that fits your belief level.'},
+  {id:'shadow_work',cat:'ascension',label:'The Ascension',name:'Shadow Work Session',desc:'Identify what is running your life from underneath the surface.'},
+  {id:'nervous_system_reset',cat:'ascension',label:'The Ascension',name:'Nervous System Reset',desc:'Regulate when everything feels like too much.'},
+  {id:'boundary_script',cat:'ascension',label:'The Ascension',name:'Boundary Script',desc:'The exact words for the boundary you have been avoiding.'},
+  {id:'journaling_protocol',cat:'ascension',label:'The Ascension',name:'Journaling Protocol',desc:'A complete journaling system — prompts, format, and 21-day challenge.'},
+  {id:'vision_board',cat:'ascension',label:'The Ascension',name:'Vision Board Activation',desc:'Turn a passive board into an active manifestation tool.'},
+  // THE GLOW UP
+  {id:'skin_diagnosis',cat:'glow',label:'The Glow Up',name:'Skin Diagnosis',desc:'Identify your skin type and get a targeted routine built for it.'},
+  {id:'budget_glow_stack',cat:'glow',label:'The Glow Up',name:'Budget Glow Stack',desc:'A complete skincare routine under $50 — every product named.'},
+  {id:'body_care_protocol',cat:'glow',label:'The Glow Up',name:'Body Care Protocol',desc:'The complete body care system — from dry brush to castor oil.'},
+  {id:'nail_growth_plan',cat:'glow',label:'The Glow Up',name:'Nail Growth Plan',desc:'Grow, strengthen, and maintain your nails at home.'},
+  {id:'glow_up_plan',cat:'glow',label:'The Glow Up',name:'30-Day Glow Up Plan',desc:'The complete physical transformation timeline, week by week.'},
+  {id:'hair_routine',cat:'glow',label:'The Glow Up',name:'Hair Care Routine',desc:'Built for your exact texture, goals, and budget.'},
+  {id:'glow_within',cat:'glow',label:'The Glow Up',name:'Glow From Within',desc:'What water, sleep, food, and stress actually do to your appearance.'},
+  {id:'color_analysis',cat:'glow',label:'The Glow Up',name:'Color Analysis',desc:'Find your undertone, your season, and your power palette.'},
+  {id:'style_audit',cat:'glow',label:'The Glow Up',name:'Style Audit',desc:'Diagnose your current aesthetic and build a signature that works.'},
+  {id:'wardrobe_budget',cat:'glow',label:'The Glow Up',name:'Wardrobe on a Budget',desc:'Build a capsule wardrobe that looks expensive without the price.'},
+  {id:'body_composition',cat:'glow',label:'The Glow Up',name:'Body Composition',desc:'Lose fat, build muscle, and train with intention — a real plan.'}
+];
+
+const PROMPTS = {
+  agent_strategy:'Tell me about your current credits, your market (NY or LA), union status, and where you are in your career. Do you have any recent callbacks or bookings to leverage?',
+  audition_conversion:'Describe your recent audition experience. Are you getting callbacks but not booking? What types of projects are you being seen for?',
+  selftape_mastery:'Walk me through your current self-tape setup — camera, lighting, background, audio, reader situation. What are you submitting for?',
+  reel_blueprint:'What footage do you currently have? What credits? What type of work are you pursuing? Do you have a budget for production?',
+  brand_deal:'Tell me about your social following, existing brand credits, audience demographics, and what brands feel aligned with your image.',
+  festival_strategy:'Tell me about your film — genre, budget, subject matter, thematic angles, current submission status, and your goals.',
+  agency_email:'List your credits, training, union status, and which agencies you are targeting. I will write your actual email.',
+  negotiation_script:'What are you negotiating — salary, brand deal, contract, or rate? What is the current offer? What do you want? What is your walk-away point?',
+  pattern_diagnosis:'Describe the pattern — what kind of people do you keep attracting? What keeps happening in your relationships? How long has this been repeating?',
+  standards_audit:'Tell me about your current or most recent relationship. What are you accepting? What do you tell yourself about why it is okay?',
+  situationship_exit:'Describe the situationship — how long, the dynamic, what has been said or not said, and what you want your exit to look like.',
+  vetting_process:'Tell me about someone new in your life — how long you have known them, what you have observed, what feels good, and what gives you pause.',
+  relationship_audit:'Describe your current relationship — what is working, what is not, what you are tolerating, and what you are afraid to admit.',
+  closing_message:'Tell me who you are closing things with, what the situation has been, how they are likely to respond, and what outcome you want.',
+  receiving_practice:'Tell me how you respond when someone offers you something — a compliment, help, a gift, love. What comes up? Where do you go?',
+  breakup_recovery:'Tell me about the relationship that ended — how long, how it ended, where you are emotionally, and what is hitting you hardest right now.',
+  friendship_audit:'Tell me about the friendship you are questioning — what the dynamic is, what has shifted, and what you are afraid to do about it.',
+  manifestation_blueprint:'Tell me exactly what you want to manifest, how long you have been working on it, your current practice, and where you feel resistance.',
+  morning_ritual:'Tell me what time you wake up, how much time you have in the morning, your current goals, and what your mornings look like right now.',
+  sats_protocol:'Tell me exactly what you want to manifest and I will write your SATS scene and walk you through the complete protocol.',
+  scripting_session:'Tell me your specific desire and your current belief level from 1-10 — how much do you actually believe it is possible?',
+  shadow_work:'Tell me what is repeating in your life. What triggers you most in others? What are you most afraid people will discover about you?',
+  nervous_system_reset:'Tell me what is happening — what does overwhelm feel like in your body, how often it happens, and what usually triggers it.',
+  boundary_script:'Tell me the situation — who, what they are doing, what you want to say, and what you are afraid will happen if you say it.',
+  journaling_protocol:'Tell me your current goals — manifestation, emotional processing, healing, clarity — and how much time you have daily for a practice.',
+  vision_board:'Tell me your vision — what areas of your life you are focusing on, where you are now, and whether you prefer digital or physical.',
+  skin_diagnosis:'Describe your skin — how it feels after washing, how it looks by midday, specific concerns, skin tone, and your current routine if any.',
+  budget_glow_stack:'Tell me your skin type or describe it, your main concerns, your skin tone, and your absolute maximum budget.',
+  body_care_protocol:'Tell me your current body care routine if any, your main concerns (dryness, hyperpigmentation, texture), and your budget.',
+  nail_growth_plan:'Tell me the current state of your nails — breaking, peeling, slow growth — and whether you prefer natural nails or press-ons.',
+  glow_up_plan:'Tell me where you are starting from — current routine, main concerns, budget, and what you most want to change in 30 days.',
+  hair_routine:'Describe your hair — texture, thickness, natural or processed, main concerns, current wash frequency, and budget.',
+  glow_within:'Tell me about your current lifestyle — sleep quality, water intake, stress level, diet, and what you notice most that products cannot fix.',
+  color_analysis:'Describe your skin tone, undertone if you know it, eye color, natural hair color, and whether gold or silver jewelry tends to look better on you.',
+  style_audit:'Describe your current wardrobe and style, your lifestyle (where you go most), and what you wish your style communicated that it currently does not.',
+  wardrobe_budget:'Tell me your lifestyle, body type, style goals, and your realistic budget for building or refreshing your wardrobe.',
+  body_composition:'Tell me your specific goal — fat loss, muscle building, toning, or general fitness — your current activity level, and any constraints on time or equipment.'
+};
+
+const COLORS = {career:'var(--career)',standard:'var(--standard)',ascension:'var(--ascension)',glow:'var(--glow)'};
+
+// ACCESS
+function checkAccess(){
+  const v=document.getElementById('gateInput').value.trim().toUpperCase();
+  const e=document.getElementById('gateErr');
+  if(v===ACCESS){isMember=true;launch();}
+  else{e.classList.add('show');document.getElementById('gateInput').value='';setTimeout(()=>e.classList.remove('show'),3000);}
+}
+document.getElementById('gateInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkAccess()});
+
+function enterFree(){
+  isMember=false;
+  launch();
+  document.getElementById('hdrFreeLabel').textContent='1 free playbook to try';
+  document.getElementById('hdrUpgrade').style.display='block';
+}
+
+function launch(){
+  document.getElementById('gate').style.display='none';
+  document.getElementById('app').style.display='flex';
+  document.getElementById('app').style.flexDirection='column';
+  document.getElementById('heroCount').textContent='36 tools across 4 chapters';
+  render('all');
+}
+
+function showUpgrade(){
+  document.getElementById('upgradeBanner').classList.add('show');
+  document.getElementById('upgradeBanner').scrollIntoView({behavior:'smooth'});
+}
+
+// RENDER
+function filter(cat,btn){
+  document.querySelectorAll('.tab').forEach(b=>{b.classList.remove('active');});
+  btn.classList.add('active');
+  render(cat);
+}
+
+function render(cat){
+  const g=document.getElementById('grid');
+  const list=cat==='all'?TOOLS:TOOLS.filter(t=>t.cat===cat);
+  g.innerHTML=list.map(t=>{
+    const locked=!isMember&&!t.free;
+    return `<div class="card tc-${t.cat}${t.free?' free-card':''}" onclick="open_('${t.id}')">
+      ${t.free?'<div class="free-badge">Free</div>':''}
+      <div class="card-cat">${t.label}</div>
+      <div class="card-name">${t.name}</div>
+      <div class="card-desc">${t.desc}</div>
+      <div class="card-cta"><span>${locked?'Members only':'Open tool'}</span><span class="card-arrow">→</span></div>
+    </div>`;
+  }).join('');
+}
+
+// TOOL OPEN
+function open_(id){
+  const tool=TOOLS.find(t=>t.id===id);
+  if(!tool)return;
+  if(!isMember&&!tool.free){showUpgrade();return;}
+  if(!isMember&&tool.free&&freeUsed){showUpgrade();return;}
+  currentTool=tool;history=[];
+  const color=COLORS[tool.cat]||'var(--gold)';
+  document.getElementById('mCat').textContent=tool.label;
+  document.getElementById('mCat').style.color=color;
+  document.getElementById('mName').textContent=tool.name;
+  document.getElementById('mSubmit').style.background=color;
+  document.getElementById('mSubmit').style.color=tool.cat==='ascension'?'#fff':'var(--black)';
+  document.getElementById('fuSend').style.background=color;
+  document.getElementById('fuSend').style.color=tool.cat==='ascension'?'#fff':'var(--black)';
+  document.getElementById('mPrompt').textContent=PROMPTS[id]||'Describe your situation.';
+  document.getElementById('mTa').value='';
+  document.getElementById('mTa').style.display='block';
+  document.getElementById('mSubmit').style.display='block';
+  document.getElementById('mSubmit').disabled=false;
+  document.getElementById('mPrompt').style.display='block';
+  document.getElementById('typing').classList.remove('show');
+  document.getElementById('playbook').classList.remove('show');
+  document.getElementById('pbText').textContent='';
+  document.getElementById('followup').classList.remove('show');
+  document.getElementById('emailCap').style.display='none';
+  document.getElementById('ecThanks').style.display='none';
+  document.getElementById('ecInput').value='';
+  document.getElementById('modalBg').classList.add('open');
+  setTimeout(()=>document.getElementById('mTa').focus(),100);
+}
+function closeBg(e){if(e.target===document.getElementById('modalBg'))closeModal();}
+function closeModal(){document.getElementById('modalBg').classList.remove('open');currentTool=null;}
+
+// GENERATE
+async function generate(){
+  if(loading)return;
+  const sit=document.getElementById('mTa').value.trim();
+  if(!sit)return;
+  loading=true;
+  document.getElementById('mSubmit').disabled=true;
+  document.getElementById('typing').classList.add('show');
+  document.getElementById('playbook').classList.remove('show');
+  history=[{role:'user',content:sit}];
+  try{
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:currentTool.id,messages:history})});
+    const d=await r.json();
+    const reply=d.content&&d.content[0]?d.content[0].text:'Something went wrong. Please try again.';
+    history.push({role:'assistant',content:reply});
+    document.getElementById('typing').classList.remove('show');
+    document.getElementById('pbText').textContent=reply;
+    document.getElementById('playbook').classList.add('show');
+    document.getElementById('followup').classList.add('show');
+    document.getElementById('emailCap').style.display='block';
+    document.getElementById('mSubmit').style.display='none';
+    document.getElementById('mTa').style.display='none';
+    document.getElementById('mPrompt').style.display='none';
+    if(!isMember)freeUsed=true;
+  }catch(e){
+    document.getElementById('typing').classList.remove('show');
+    document.getElementById('pbText').textContent='Connection issue. Please try again.';
+    document.getElementById('playbook').classList.add('show');
+    document.getElementById('mSubmit').disabled=false;
+  }
+  loading=false;
+}
+
+// FOLLOW-UP
+async function sendFu(){
+  if(loading)return;
+  const q=document.getElementById('fuInput').value.trim();
+  if(!q)return;
+  loading=true;
+  document.getElementById('fuSend').disabled=true;
+  document.getElementById('fuInput').value='';
+  history.push({role:'user',content:q});
+  const prev=document.getElementById('pbText').textContent;
+  document.getElementById('pbText').textContent=prev+'\n\n──────────────────────\n\n';
+  try{
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:currentTool.id,messages:history})});
+    const d=await r.json();
+    const reply=d.content&&d.content[0]?d.content[0].text:'Something went wrong. Please try again.';
+    history.push({role:'assistant',content:reply});
+    document.getElementById('pbText').textContent=prev+'\n\n──────────────────────\n\n'+reply;
+    document.getElementById('mBody').scrollTop=document.getElementById('mBody').scrollHeight;
+  }catch(e){
+    document.getElementById('pbText').textContent=prev+'\n\nConnection issue. Please try again.';
+  }
+  loading=false;
+  document.getElementById('fuSend').disabled=false;
+}
+
+// COPY
+function copyPlaybook(){
+  const text=`THE MÉTIVIER METHOD — ${currentTool?.name?.toUpperCase()}\n\n${document.getElementById('pbText').textContent}\n\nGet your playbook: metiviermethod.com`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.querySelector('.pb-copy');
+    btn.textContent='Copied ✓';
+    setTimeout(()=>btn.textContent='Copy Playbook',2000);
+  });
+}
+
+// EMAIL
+function sendEmail(){
+  const email=document.getElementById('ecInput').value.trim();
+  if(!email||!email.includes('@'))return;
+  document.getElementById('ecThanks').style.display='block';
+  document.getElementById('ecInput').style.display='none';
+  document.querySelector('.ec-send').style.display='none';
+  // In production: POST to your email service (ConvertKit, Mailchimp, etc.)
+}
+</script>
+</body>
+</html>
